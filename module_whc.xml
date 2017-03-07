@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_whc" default="compile.module.whc">
+  <dirname property="module.whc.basedir" file="${ant.file.module_whc}"/>
+  
+  <property name="module.jdk.home.whc" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.whc" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.whc" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.whc" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="whc.output.dir" value="${module.whc.basedir}/out/production/WHC"/>
+  <property name="whc.testoutput.dir" value="${module.whc.basedir}/out/test/WHC"/>
+  
+  <path id="whc.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="whc.module.production.classpath">
+    <path refid="${module.jdk.classpath.whc}"/>
+  </path>
+  
+  <path id="whc.runtime.production.module.classpath">
+    <pathelement location="${whc.output.dir}"/>
+  </path>
+  
+  <path id="whc.module.classpath">
+    <path refid="${module.jdk.classpath.whc}"/>
+    <pathelement location="${whc.output.dir}"/>
+  </path>
+  
+  <path id="whc.runtime.module.classpath">
+    <pathelement location="${whc.testoutput.dir}"/>
+    <pathelement location="${whc.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.whc">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.whc">
+    <patternset refid="excluded.from.module.whc"/>
+  </patternset>
+  
+  <path id="whc.module.sourcepath">
+    <dirset dir="${module.whc.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.whc" depends="compile.module.whc.production,compile.module.whc.tests" description="Compile module WHC"/>
+  
+  <target name="compile.module.whc.production" depends="register.custom.compilers" description="Compile module WHC; production classes">
+    <mkdir dir="${whc.output.dir}"/>
+    <javac2 destdir="${whc.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.whc}/javac">
+      <compilerarg line="${compiler.args.whc}"/>
+      <bootclasspath refid="whc.module.bootclasspath"/>
+      <classpath refid="whc.module.production.classpath"/>
+      <src refid="whc.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.whc"/>
+    </javac2>
+    
+    <copy todir="${whc.output.dir}">
+      <fileset dir="${module.whc.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.whc.tests" depends="register.custom.compilers,compile.module.whc.production" description="compile module WHC; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.whc" description="cleanup module">
+    <delete dir="${whc.output.dir}"/>
+    <delete dir="${whc.testoutput.dir}"/>
+  </target>
+</project>

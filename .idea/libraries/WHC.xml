@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="WHC">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/dist/WHC.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
